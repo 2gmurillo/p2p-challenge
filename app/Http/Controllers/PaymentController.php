@@ -6,49 +6,45 @@ namespace App\Http\Controllers;
 
 use App\ExternalServices\PaymentMethods\FirstPaymentMethod;
 use App\ExternalServices\PaymentMethods\SecondPaymentMethod;
+use App\Http\Controllers\Concerns\Constants\DollarPaymentCharge;
+use App\Http\Controllers\Concerns\Constants\ShippingMethods;
+use App\Http\Requests\PreparePaymentRequest;
+use App\Http\Requests\SendPaymentRequest;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 class PaymentController extends Controller
 {
-    public function create(Request $request): View
+    public function prepare(PreparePaymentRequest $request): View
     {
-        $request->validate(
-            [
-                'amount' => ['required', 'numeric', 'min:1'],
-                'distance' => ['required', 'numeric', 'min:1'],
-                'weight' => ['required', 'numeric', 'min:1'],
-            ]
-        );
+        $shippingMethod = $request->shipping_method;
 
-        switch ($request->shipping_method) {
-            case 'premium':
-                $shippingMethodCharge = 5;
+        switch ($shippingMethod) {
+            case ShippingMethods::PREMIUM:
+                $shippingMethodCharge = DollarPaymentCharge::SHIPPING_METHODS[ShippingMethods::PREMIUM];
                 break;
-            case 'express':
-                $shippingMethodCharge = 3;
+            case ShippingMethods::EXPRESS:
+                $shippingMethodCharge = DollarPaymentCharge::SHIPPING_METHODS[ShippingMethods::EXPRESS];
                 break;
             default:
-                $shippingMethodCharge = 1;
+                $shippingMethodCharge = DollarPaymentCharge::SHIPPING_METHODS[ShippingMethods::BASIC];
         }
 
-        $distanceCharge = $request->distance * 0.25;
-        $weightCharge = $request->weight * 0.5;
+        $distanceCharge = $request->distance * DollarPaymentCharge::DISTANCE;
+        $weightCharge = $request->weight * DollarPaymentCharge::WEIGHT;
         $totalAmount = $distanceCharge + $weightCharge + $shippingMethodCharge + $request->amount;
 
-        return view('payments.create', compact('totalAmount'));
-    }
-
-    public function store(Request $request): RedirectResponse
-    {
-        $request->validate(
+        return view(
+            'payments.prepare',
             [
-                'payment_method_name' => ['required', Rule::in(array_column(config('payment-methods'), 'name'))],
+                'totalAmount' => $totalAmount,
+                'shippingMethod' => $shippingMethod,
             ]
         );
+    }
 
+    public function send(SendPaymentRequest $request): RedirectResponse
+    {
         $requestData = [
             'amount' => $request->total_amount,
             'description' => $request->description,
@@ -74,6 +70,10 @@ class PaymentController extends Controller
 
     public function show(string $payment): View
     {
+        if (!in_array($payment, array_keys(config('payment-methods')))){
+            return view('errors.404'); // No pregunten por esto, es chafa.
+        }
+
         return view('payments.show', compact('payment'));
     }
 }

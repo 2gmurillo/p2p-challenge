@@ -1,7 +1,11 @@
 @extends('layouts.app')
 @section('content')
     <div class="d-flex flex-column">
-        <h1 class="alert alert-primary">Total a pagar: ${{$totalAmount}} USD</h1>
+        <h2 class="alert alert-success text-center">
+            <span>Medio de transporte: <span class="text-uppercase text-secondary">{{$shippingMethod}}</span></span>
+            <br/>
+            <span class="mb-0">Total a pagar: <span class="text-secondary">${{$totalAmount}} USD</span></span>
+        </h2>
         @if($errors->any())
             <div class="alert alert-danger">
                 @foreach($errors->all() as $error)
@@ -11,30 +15,30 @@
         @endif
         @error('payment_method_name', 'description')
         @enderror
-        <form action="{{route('payments.store', ['total_amount' => $totalAmount])}}" method="POST"
+        <form action="{{route('payments.send', ['total_amount' => $totalAmount])}}" method="POST"
               class="p-3 bg-dark text-white rounded">
             @csrf
             <h2 class="text-center">Seleccione el medio de pago</h2>
             <div class="form-group d-flex justify-content-center" id="toggler">
                 <div class="btn-group btn-group-toggle d-flex flex-column" data-toggle="buttons">
-                    @foreach (config('payment-methods') as $paymentMethod)
+                    @foreach (config('payment-methods') as $paymentMethodName => $paymentMethodValues)
                         <label
                             class="btn btn-outline-secondary rounded m-2 p-1"
-                            data-target="#{{ $paymentMethod['name'] }}Collapse"
+                            data-target="#{{ $paymentMethodName }}Collapse"
                             data-toggle="collapse">
-                            <input type="radio" name="payment_method_name" value="{{ $paymentMethod['name'] }}"/>
+                            <input type="radio" name="payment_method_name" value="{{ $paymentMethodName }}"/>
                             <img style="width: 200px" class="img-thumbnail h-100"
-                                 src="{{ asset($paymentMethod['image']) }}"/>
+                                 src="{{ asset($paymentMethodValues['image']) }}" alt="{{ $paymentMethodName }}"/>
                         </label>
-                        <div id="{{ $paymentMethod['name'] }}Collapse" class="collapse" data-parent="#toggler">
-                            @includeIf('components.' . strtolower($paymentMethod['name']) . '-collapse')
+                        <div id="{{ $paymentMethodName }}Collapse" class="collapse" data-parent="#toggler">
+                            @includeIf('components.' . strtolower($paymentMethodName) . '-collapse')
                         </div>
                     @endforeach
                 </div>
             </div>
             <div class="d-flex justify-content-center ">
                 <button class="btn btn-success mr-1" type="submit">Pagar</button>
-                <a href="/" class="btn btn-danger ml-1">Volver</a>
+                <a href="javascript:history.back()" class="btn btn-danger ml-1">Volver</a>
             </div>
         </form>
     </div>
