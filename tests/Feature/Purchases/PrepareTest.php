@@ -14,7 +14,7 @@ class PrepareTest extends TestCase
         $response = $this->get($this->route($preparePaymentData));
         $response->assertStatus(200);
         $response->assertViewIs('purchases.prepare');
-        $response->assertViewHas('totalAmount', 16.5);
+        $response->assertViewHas('purchaseAmount', 16.5);
     }
 
     /**

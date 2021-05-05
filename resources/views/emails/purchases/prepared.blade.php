@@ -16,7 +16,7 @@
         <br/>
         <strong>Medio de transporte:</strong> <span style="text-transform: capitalize;">{{ $shippingMethod }}</span>
         <br/>
-        <strong>Monto total:</strong> ${{ $totalAmount }} USD
+        <strong>Monto total:</strong> ${{ $purchaseAmount }} USD
         <br/>
         <strong>Medio de pago:</strong> <span style="text-transform: uppercase;">{{ $paymentMethod }}</span>
     </p>

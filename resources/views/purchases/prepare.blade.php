@@ -4,7 +4,7 @@
         <h2 class="alert alert-success text-center">
             <span>Medio de transporte: <span class="text-uppercase text-secondary">{{$shippingMethod}}</span></span>
             <br/>
-            <span class="mb-0">Total a pagar: <span class="text-secondary">${{$totalAmount}} USD</span></span>
+            <span class="mb-0">Total a pagar: <span class="text-secondary">${{$purchaseAmount}} USD</span></span>
         </h2>
         @if($errors->any())
             <div class="alert alert-danger">
@@ -16,7 +16,7 @@
         @error('payment_method', 'description')
         @enderror
         <form
-            action="{{route('purchases.pay', ['total_amount' => $totalAmount, 'shipping_method' => $shippingMethod])}}"
+            action="{{route('purchases.pay', ['purchase_amount' => $purchaseAmount, 'shipping_method' => $shippingMethod])}}"
             method="POST"
             class="p-3 bg-dark text-white rounded">
             @csrf

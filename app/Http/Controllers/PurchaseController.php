@@ -51,13 +51,14 @@ class PurchaseController extends Controller
 
         $distanceCharge = $request->distance * DollarPaymentCharge::DISTANCE;
         $weightCharge = $request->weight * DollarPaymentCharge::WEIGHT;
-        $totalAmount = $distanceCharge + $weightCharge + $shippingMethodCharge + $request->amount;
+
+        $purchaseAmount = $distanceCharge + $weightCharge + $shippingMethodCharge + $request->amount;
 
         return view(
             'purchases.prepare',
             [
-                'totalAmount' => $totalAmount,
-                'shippingMethod' => $shippingMethod,
+                'purchaseAmount' => $purchaseAmount,
+                'shippingMethod' => $request->shipping_method,
             ]
         );
     }
@@ -89,7 +90,7 @@ class PurchaseController extends Controller
                     'name' => $customer['name'],
                     'email' => $customer['email'],
                     'shippingMethod' => $request->shipping_method,
-                    'totalAmount' => $request->total_amount,
+                    'purchaseAmount' => $request->purchase_amount,
                     'paymentMethod' => $request->payment_method,
                 ],
                 function ($mail) use ($sellers) {
@@ -102,7 +103,7 @@ class PurchaseController extends Controller
         }
 
         $requestData = [
-            'amount' => $request->total_amount,
+            'amount' => $request->purchase_amount,
             'description' => $request->description,
             'return_url' => route('purchases.show', $request->payment_method),
         ];
@@ -118,7 +119,7 @@ class PurchaseController extends Controller
             return $paymentMethod->paymentRequest($requestData);
         } else {
             $paymentMethod = new SecondPaymentMethod();
-            $paymentMethod->processPayment((float)$request->total_amount);
+            $paymentMethod->processPayment((float)$request->purchase_amount);
 
             return redirect($requestData['return_url']);
         }
