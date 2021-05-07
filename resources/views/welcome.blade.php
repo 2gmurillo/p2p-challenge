@@ -7,7 +7,7 @@
             <div class="form-group">
                 <label for="formGroupExampleInput">Precio de los productos (USD)</label>
                 <input name="amount" type="number" class="form-control" id="formGroupExampleInput"
-                       placeholder="Dólares (USD)" step="0.1" value="{{old('amount', 12)}}"/>
+                       placeholder="Dólares (USD)" step="0.1" value="{{old('amount', rand(12, 28))}}"/>
                 @error('amount')
                 <div class="text-danger">{{ $message }}</div>
                 @enderror
@@ -15,7 +15,7 @@
             <div class="form-group">
                 <label for="formGroupExampleInput3">Peso de los productos (kg)</label>
                 <input name="distance" type="number" class="form-control" id="formGroupExampleInput3"
-                       placeholder="Kilogramos (kg)" step="0.1" value="{{old('distance', 4)}}"/>
+                       placeholder="Kilogramos (kg)" step="0.1" value="{{old('distance', rand(4, 10))}}"/>
                 @error('distance')
                 <div class="text-danger">{{ $message }}</div>
                 @enderror
@@ -23,7 +23,7 @@
             <div class="form-group">
                 <label for="formGroupExampleInput2">Distancia del envío (km)</label>
                 <input name="weight" type="number" class="form-control" id="formGroupExampleInput2"
-                       placeholder="Kilómetros (km)" step="0.1" value="{{old('weight', 5)}}"/>
+                       placeholder="Kilómetros (km)" step="0.1" value="{{old('weight', rand(5, 10))}}"/>
                 @error('weight')
                 <div class="text-danger">{{ $message }}</div>
                 @enderror

@@ -8,17 +8,17 @@ use Illuminate\Http\RedirectResponse;
 
 class FirstPaymentMethod
 {
-    public function paymentRequest(array $requestData): RedirectResponse
+    public function paymentRequest(float $amount, string $description, string $returnUrl): RedirectResponse
     {
-        // Lógica desarrollada con $requestData por el servicio First
+        // Lógica desarrollada con $amount, $description y $returnUrl por el servicio First
 
-        return redirect($requestData['return_url']);
+        return redirect($returnUrl);
     }
 
     public function paymentInfo(string $reference): string
     {
         // Lógica desarrollada con $reference por el servicio First
 
-        return 'URL';
+        return 'redirectUrl';
     }
 }

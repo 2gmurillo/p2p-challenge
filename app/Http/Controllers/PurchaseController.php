@@ -102,12 +102,6 @@ class PurchaseController extends Controller
             );
         }
 
-        $requestData = [
-            'amount' => $request->purchase_amount,
-            'description' => $request->description,
-            'return_url' => route('purchases.show', $request->payment_method),
-        ];
-
         if ('first' === $request->payment_method) {
             $request->validate(
                 [
@@ -116,12 +110,16 @@ class PurchaseController extends Controller
             );
             $paymentMethod = new FirstPaymentMethod();
 
-            return $paymentMethod->paymentRequest($requestData);
+            return $paymentMethod->paymentRequest(
+                $request->purchase_amount,
+                $request->description,
+                route('purchases.show', $request->payment_method)
+            );
         } else {
             $paymentMethod = new SecondPaymentMethod();
             $paymentMethod->processPayment((float)$request->purchase_amount);
 
-            return redirect($requestData['return_url']);
+            return redirect(route('purchases.show', $request->payment_method));
         }
     }
 
